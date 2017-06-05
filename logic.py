@@ -1,33 +1,31 @@
 import db
 
 
-def get_questions(five=False):
+def get_questions(sort_order, five=False):
     """
     Returns all the questions.
-        @param     five    bool    True if you want only 5 questions, otherwise False
-        @return            list    List of dictionaries for each question.
+        @param     sort_order    string     The request path
+        @param     five          bool       True if you want only 5 questions, otherwise False
+        @return                  list       List of dictionaries for each question.
     """
     questions = None
+
+    if sort_order:
+        pass
+        # TODO_ a sort order path-ként jön!!!
+
     with db.get_cursor() as cursor:
-        if five:
-            sql = """SELECT id,
+        sql = """SELECT id,
                         title,
                         message,
                         view_number,
                         vote_number,
                         to_char(submission_time, 'YYYY-MM-DD HH24:MI') AS submission_time
-                     FROM question
-                     ORDER BY submission_time DESC
-                     LIMIT 5"""
-        else:
-            sql = """SELECT id,
-                            title,
-                            message,
-                            view_number,
-                            vote_number,
-                            to_char(submission_time, 'YYYY-MM-DD HH24:MI') AS submission_time
-                     FROM question
-                     ORDER BY submission_time DESC"""
+                 FROM question
+                 ORDER BY submission_time DESC"""
+        if five:
+            sql = sql + """ LIMIT 5"""
+
         cursor.execute(sql)
         questions = cursor.fetchall()
     return questions
@@ -78,3 +76,53 @@ def user_search(search_phrase):
         cursor.execute(sql, data)
         records = cursor.fetchall()
     return records
+
+
+def generate_links(sort_order):
+    '''
+    Generate links for ordering the table for all 5 columns.
+        @param    sort_order    list      List of tuples containing the request path parameters
+        @return                 list      List of tuples containing the links as (column, order)
+    '''
+    links = {}
+    columns = ('time', 'view', 'vote', 'title', 'message')
+
+    if sort_order:
+        sorted_columns = [item[0] for item in sort_order]
+
+        for column in columns:
+            if len(sort_order) == 1:
+                if column in sorted_columns:
+                    links[column] = '{}={}'.format(column, 'asc' if sort_order[0][1] == 'desc' else 'desc')
+                else:
+                    links[column] = '{}={}&{}=asc'.format(sort_order[0][0], sort_order[0][1], column)
+            else:
+                if column in sorted_columns:
+                    filtered_sort_order = [item for item in sort_order if column != item[0]]
+                    request_params = '&'.join(list(map(lambda x: '='.join(x), filtered_sort_order)))
+                    column_order = [item for item in sort_order if column == item[0]][0][1]
+                    links[column] = request_params + '&{}={}'.format(column,
+                                                                     'asc' if column_order == 'desc' else 'desc')
+                else:
+                    request_params = '&'.join(list(map(lambda x: '='.join(x), sort_order)))
+                    links[column] = request_params + '&{}=asc'.format(column)
+    else:
+        for column in columns:
+            links[column] = '{}=asc'.format(column)
+    return links
+
+
+def url_helper(url):
+    '''
+    Convert URL parameters to list of tuples
+        @param    url    string    The request URL
+        @return          list      List of tuples, i.e (column, order)
+    '''
+    params_start = url.find('?')
+    if params_start == -1:
+        params = False
+    else:
+        params = url[params_start + 1:].split('&')
+        params = list(map(lambda x: tuple(x.split('=')), params))
+    return params
+

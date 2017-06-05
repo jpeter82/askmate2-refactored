@@ -6,13 +6,21 @@ app = Flask(__name__)
 app.jinja_env.add_extension('jinja2.ext.do')
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/list', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/list', strict_slashes=False)
 def index():
-    return render_template('index.html', questions=logic.get_questions())
+    if request.path == '/':
+        five = True
+        link = None
+        questions = logic.get_questions(None, five=True)
+    else:
+        five = False
+        link = logic.generate_links(logic.url_helper(request.url))
+        questions = logic.get_questions(request.args.items())
+    return render_template('index.html', questions=questions, five=five, link=link)
 
 
-@app.route("/search", methods=['GET'])
+@app.route('/search')
 def search_questions():
     data = None
     search_phrase = request.args.get('q', None)

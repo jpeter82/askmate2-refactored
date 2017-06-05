@@ -6,6 +6,10 @@
     <p>AskMate is a crowdsourced Q&#38;A site where peaople can easily ask and answer to help each other.</p>
     <a href="/new-question">Ask new Question!</a>
     <br />
+    {% if five %}
+    <span><a href="/list">Click here to see more questions</a></span>
+    <br />
+    {% endif %}
     <h2>Questions</h2>
     {% if questions %}
     <div>
@@ -17,11 +21,11 @@
     <div>
         <table id="questions-table">
             <thead>
-                <th>Submisson Time</th>
-                <th>View Number</th>
-                <th>Vote Number</th>
-                <th>Title</th>
-                <th>Message</th>
+                <th>{% if five %} Submission Time {% else %} <a href="/list?{{ link.time }}">Submisson Time</a> {% endif %}</th>
+                <th>{% if five %} View Number {% else %} <a href="/list?{{ link.view }}">View Number</a> {% endif %}</th>
+                <th>{% if five %} Vote Number {% else %} <a href="/list?{{ link.vote }}">Vote Number</a> {% endif %}</th>
+                <th>{% if five %} Title {% else %} <a href="/list?{{ link.title }}">Title</a> {% endif %}</th>
+                <th>{% if five %} Message {% else %} <a href="/list?{{ link.message }}">Message</a> {% endif %}</th>
                 <th>Edit</th>
                 <th>Delete</th>
             </thead>
