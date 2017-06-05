@@ -1,5 +1,53 @@
 {% extends "base.html" %}
 {% block title %} - {% if question %} Edit {% else -%} Add new {% endif %} Record{% endblock %}
 {% block content %}
-
+<div>
+    <h1>AskMate</h1>
+    <p>AskMate is a crowdsourced Q&#38;A site where peaople can easily ask and answer to help each other.</p>
+    <a href="/new-question">Ask new Question!</a>
+    <br />
+    <h2>Questions</h2>
+    {% if display %}
+    <div>
+        <form action="{{ url_for('search_questions') }}">
+            <input type="text" name="q" placeholder="Search for..." autofocus />
+            <input type="submit" value="Search" />
+        </form>
+    </div>
+    <div>
+        <table id="questions-table">
+            <thead>
+                <th>Submisson Time</th>
+                <th>View Number</th>
+                <th>Vote Number</th>
+                <th>Title</th>
+                <th>Message</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </thead>
+            <tbody>
+                {% for question in display %}
+                <tr>
+                    <td>{{ question['submission_time'] }}</td>
+                    <td>{{ question['view_number'] }}</td>
+                    <td>{{ question['vote_number'] }}</td>
+                    <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
+                    <td><a href="/question/{{ question['id'] }}">{{ question['message'] }}</a></td>
+                    <td>
+                        <a href="/question/{{ question['id'] }}/edit">Edit</a>
+                    </td>
+                    <td>
+                        <a href="/question/{{ question['id'] }}/delete">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div>
+        <h2>No questions to display</h2>
+    </div>
+    {% endif %}
+</div>
 {%- endblock content %}
