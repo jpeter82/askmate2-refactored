@@ -15,7 +15,7 @@ def index():
 @app.route("/search", methods=['GET'])
 def search_questions():
     data = None
-    search_phrase = request.form.get('search-phrase', None)
+    search_phrase = request.args.get('q', None)
     if search_phrase is not None:
         data = logic.user_search(search_phrase)
     return render_template('search.html', search_phrase=search_phrase, data=data)
