@@ -7,10 +7,10 @@
     <a href="/new-question">Ask new Question!</a>
     <br />
     <h2>Questions</h2>
-    {% if display %}
+    {% if questions %}
     <div>
         <form action="{{ url_for('search_questions') }}">
-            <input type="text" name="q" placeholder="Search for..." autofocus />
+            <input type="text" name="search-phrase" autofocus />
             <input type="submit" value="Search" />
         </form>
     </div>
@@ -26,18 +26,18 @@
                 <th>Delete</th>
             </thead>
             <tbody>
-                {% for question in display %}
+                {% for question in questions %}
                 <tr>
-                    <td>{{ question['submission_time'] }}</td>
-                    <td>{{ question['view_number'] }}</td>
-                    <td>{{ question['vote_number'] }}</td>
-                    <td><a href="/question/{{ question['id'] }}">{{ question['title'] }}</a></td>
-                    <td><a href="/question/{{ question['id'] }}">{{ question['message'] }}</a></td>
+                    <td>{{ question.submission_time }}</td>
+                    <td>{{ question.view_number }}</td>
+                    <td>{{ question.vote_number }}</td>
+                    <td><a href="/question/{{ question.id }}">{{ question.title }}</a></td>
+                    <td><a href="/question/{{ question.id }}">{{ question.message }}</a></td>
                     <td>
-                        <a href="/question/{{ question['id'] }}/edit">Edit</a>
+                        <a href="/question/{{ question.id }}/edit">Edit</a>
                     </td>
                     <td>
-                        <a href="/question/{{ question['id'] }}/delete">Delete</a>
+                        <a href="/question/{{ question.id }}/delete">Delete</a>
                     </td>
                 </tr>
                 {% endfor %}

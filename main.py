@@ -9,7 +9,16 @@ app.jinja_env.add_extension('jinja2.ext.do')
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/list', methods=['GET', 'POST'])
 def index():
-    pass
+    return render_template('index.html', questions=logic.get_questions())
+
+
+@app.route("/search", methods=['GET'])
+def search_questions():
+    data = None
+    search_phrase = request.form.get('search-phrase', None)
+    if search_phrase is not None:
+        data = logic.user_search(search_phrase)
+    return render_template('search.html', search_phrase=search_phrase, data=data)
 
 
 @app.errorhandler(404)
