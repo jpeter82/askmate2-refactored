@@ -1,21 +1,33 @@
 import db
 
 
-def get_questions():
+def get_questions(five=False):
     """
     Returns all the questions.
-        @return    list    List of dictionaries for each question.
+        @param     five    bool    True if you want only 5 questions, otherwise False
+        @return            list    List of dictionaries for each question.
     """
     questions = None
     with db.get_cursor() as cursor:
-        sql = """SELECT id,
+        if five:
+            sql = """SELECT id,
                         title,
                         message,
                         view_number,
                         vote_number,
                         to_char(submission_time, 'YYYY-MM-DD HH24:MI') AS submission_time
-                 FROM question
-                 ORDER BY submission_time DESC"""
+                     FROM question
+                     ORDER BY submission_time DESC
+                     LIMIT 5"""
+        else:
+            sql = """SELECT id,
+                            title,
+                            message,
+                            view_number,
+                            vote_number,
+                            to_char(submission_time, 'YYYY-MM-DD HH24:MI') AS submission_time
+                     FROM question
+                     ORDER BY submission_time DESC"""
         cursor.execute(sql)
         questions = cursor.fetchall()
     return questions
