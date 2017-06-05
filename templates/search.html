@@ -4,7 +4,7 @@
 <div>
     <h1>Search results for {{ search_phrase }}:</h1>
 </div>
-
+{% if data %}
 <div>
     {% for record in data %}
     {% if record.question_id not in last_question %}
@@ -19,4 +19,9 @@
     {% do last_question.append(record.question_id) %}
     {% endfor %}
 </div>
+{% else %}
+<div>
+    <span>No Results</span>
+</div>
+{% endif %}
 {%- endblock content %}
