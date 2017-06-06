@@ -22,11 +22,11 @@ def index():
 
 @app.route('/search')
 def search_questions():
-    data = None
     search_phrase = request.args.get('q', None)
-    if search_phrase is not None:
+    if search_phrase is not None and len(str(search_phrase)) > 2:
         data = logic.user_search(search_phrase)
-    return render_template('search.html', search_phrase=search_phrase, data=data)
+        return render_template('search.html', search_phrase=search_phrase, data=data)
+    return redirect(request.referrer)
 
 
 @app.errorhandler(404)
