@@ -16,7 +16,7 @@ def index():
     else:
         five = False
         link = logic.generate_links(logic.url_helper(request.url))
-        questions = logic.get_questions(request.args.items())
+        questions = logic.get_questions(logic.url_helper(request.url))
     return render_template('index.html', questions=questions, five=five, link=link)
 
 

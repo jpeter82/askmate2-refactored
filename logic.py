@@ -10,10 +10,6 @@ def get_questions(sort_order, five=False):
     """
     questions = None
 
-    if sort_order:
-        pass
-        # TODO_ a sort order path-ként jön!!!
-
     with db.get_cursor() as cursor:
         sql = """SELECT id,
                         title,
@@ -21,8 +17,16 @@ def get_questions(sort_order, five=False):
                         view_number,
                         vote_number,
                         to_char(submission_time, 'YYYY-MM-DD HH24:MI') AS submission_time
-                 FROM question
-                 ORDER BY submission_time DESC"""
+                 FROM question"""
+
+        if sort_order:
+            fields = {'time': 'submission_time', 'view': 'view_number', 'vote': 'vote_number',
+                      'title': 'title', 'message': 'message'}
+            order_by = ', '.join(fields[item[0]] + ' ' + item[1] for item in sort_order)
+            sql = sql + """ ORDER BY """ + order_by
+        else:
+            sql = sql + """ ORDER BY submission_time DESC"""
+
         if five:
             sql = sql + """ LIMIT 5"""
 
@@ -125,4 +129,3 @@ def url_helper(url):
         params = url[params_start + 1:].split('&')
         params = list(map(lambda x: tuple(x.split('=')), params))
     return params
-
